@@ -1,0 +1,11 @@
+---
+title: "Proyecto Entrega 2"
+author: "Grupo #6"
+date: "5/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
