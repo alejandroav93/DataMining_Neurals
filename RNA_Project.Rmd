@@ -69,15 +69,12 @@ test<-data[-corte,]
 ```
 
 ```{r modelo con Caret 1 - neuronal clasificacion nnet}
-redCaret <- train(SEMGES~., data=train, method="nnet", trace=F)
+redCaret <- train(SEMGES~., data=train, method="pcaNNet", trace=F)
 test$prediccionCaret<-predict(redCaret, newdata = test)
 cfmCaret<-confusionMatrix(test$prediccionCaret,test$SEMGES)
 cfmCaret
 ```
 
 
-```{r}
-
-```
 
 
