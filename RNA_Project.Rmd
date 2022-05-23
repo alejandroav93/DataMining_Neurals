@@ -55,10 +55,29 @@ write.csv(database, "./db/datagestacion.csv", row.names=FALSE)
 datagestacion <- read.csv("./db/datagestacion.csv", stringsAsFactors = F)
 ```
 
-Se hace el set de una semilla para evitar los efectos del "RNG" y garantizar los mismos resultados. Se importan los datos para la creacion de sets de entrenamiento para el algoritmo
+Se hace el set de una semilla para evitar los efectos del "RNG" y garantizar los mismos resultados. Se importan los datos para la creacion de sets de entrenamiento para el algoritmo. Print del set de datos.
 ```{r training set}
 set.seed(123)
 data <- fread("./db/datagestacion.csv", select = c("DEPREG","AÑOOCU", "EDADM", "ESCOLAM", "DEPREM", "SEMGES"))
+data$SEMGES <- as.factor(data$SEMGES)
 data
+
+corte <- sample(nrow(data),nrow(data)*0.7)
+train<-data[corte,]
+test<-data[-corte,]
+
 ```
+
+```{r modelo con Caret 1 - neuronal clasificacion nnet}
+redCaret <- train(SEMGES~., data=train, method="nnet", trace=F)
+test$prediccionCaret<-predict(redCaret, newdata = test)
+cfmCaret<-confusionMatrix(test$prediccionCaret,test$PriceRange)
+cfmCaret
+```
+
+
+```{r}
+
+```
+
 
