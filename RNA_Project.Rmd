@@ -9,3 +9,56 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Importación de librerias necesarias
+```{r message=FALSE,warning=FALSE}
+library("tidyverse")
+library("dplyr")
+library("ggplot2")
+library("httr")
+library("readr")
+library(rpart)
+library(caret)
+library(randomForest)
+library(tree)
+library(rpart.plot)
+library(car)
+library(cluster) #Para calcular la silueta
+library(e1071)#para cmeans
+library(mclust) #mixtures of gaussians
+library(fpc) #para hacer el plotcluster
+library(NbClust) #Para determinar el número de clusters óptimo
+library(factoextra) #Para hacer gráficos bonitos de clustering
+library(hopkins) #Para revisar si vale la pena hacer agrupamiento
+library(GGally) #Para hacer el conjunto de graficos
+library(FeatureImpCluster) #Para revisar la importancia de las variables en los grupos.
+library(pheatmap) #Para hacer mapa de calor
+library(caret)
+library(nnet)
+library(RWeka)
+library(neural)
+library(dummy)
+library(neuralnet)
+library(MASS)
+```
+
+Se está asumiendo que los abortos con semanas de gestación sin registro se encuentran entre las primeras 12 semanas del embarazo. Todo embarazo que supere las 40 semanas se considera como extendido
+```{r database import}
+database <- read.csv("./db/database.csv", stringsAsFactors = F)
+database$SEMGES[database$SEMGES == 9999] <- 1
+database$SEMGES[database$SEMGES == 99] <- 1
+database$SEMGES[database$SEMGES == 999] <- 1
+database$SEMGES[database$SEMGES <= 12] <- "Primer Trimestre"
+database$SEMGES[database$SEMGES <= 28 ] <- "Segundo Trimestre"
+database$SEMGES[database$SEMGES <= 40] <- "Tercer Trimestre"
+database$SEMGES[database$SEMGES <= 60] <- "Extendidos"
+write.csv(database, "./db/datagestacion.csv", row.names=FALSE)
+datagestacion <- read.csv("./db/datagestacion.csv", stringsAsFactors = F)
+```
+
+Se hace el set de una semilla para evitar los efectos del "RNG" y garantizar los mismos resultados. Se importan los datos para la creacion de sets de entrenamiento para el algoritmo
+```{r training set}
+set.seed(123)
+data <- fread("./db/datagestacion.csv", select = c("DEPREG","AÑOOCU", "EDADM", "ESCOLAM", "DEPREM", "SEMGES"))
+data
+```
+
